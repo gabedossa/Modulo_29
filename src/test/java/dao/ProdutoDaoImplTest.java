@@ -56,18 +56,16 @@ class ProdutoDaoImplTest {
         assertEquals("Teclado", encontrado.getNome());
         assertEquals(0, new BigDecimal("199.90").compareTo(encontrado.getPreco()));
         assertEquals(10, encontrado.getQuantidade());
-        assertEquals(true, encontrado.getDisponivel());
     }
 
     @Test
-    void atualizarDeveAlterarCodigoNomePrecoQuantidadeEDisponivel() throws Exception {
+    void atualizarDeveAlterarCodigoNomePrecoEQuantidade() throws Exception {
         Produto produto = novoProduto("Mouse", new BigDecimal("59.90"), 20);
 
         produto.setNome("Mouse Atualizado");
         produto.setCodigo("TESTE-" + UUID.randomUUID());
         produto.setPreco(new BigDecimal("69.90"));
         produto.setQuantidade(15);
-        produto.setDisponivel(false);
         Integer linhasAfetadas = dao.atualizar(produto);
 
         assertEquals(1, linhasAfetadas);
@@ -77,7 +75,6 @@ class ProdutoDaoImplTest {
         assertEquals("Mouse Atualizado", encontrado.getNome());
         assertEquals(0, new BigDecimal("69.90").compareTo(encontrado.getPreco()));
         assertEquals(15, encontrado.getQuantidade());
-        assertEquals(false, encontrado.getDisponivel());
     }
 
     @Test

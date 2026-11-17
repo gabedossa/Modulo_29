@@ -39,7 +39,7 @@ public class ProdutoDaoImpl implements ProdutoDAO {
     }
 
     private String getSqlInsert() {
-        return "INSERT INTO produto (codigo, nome, preco, quantidade, disponivel) VALUES (?, ?, ?, ?, ?)";
+        return "INSERT INTO produto (codigo, nome, preco, quantidade) VALUES (?, ?, ?, ?)";
     }
 
     private void adicionarParametrosInsert(PreparedStatement stm, Produto produto) throws Exception {
@@ -47,7 +47,6 @@ public class ProdutoDaoImpl implements ProdutoDAO {
         stm.setString(2, produto.getNome());
         stm.setBigDecimal(3, produto.getPreco());
         stm.setInt(4, produto.getQuantidade());
-        stm.setBoolean(5, produto.getDisponivel());
     }
 
     @Override
@@ -71,7 +70,7 @@ public class ProdutoDaoImpl implements ProdutoDAO {
     }
 
     private String getSqlUpdate() {
-        return "UPDATE produto SET codigo = ?, nome = ?, preco = ?, quantidade = ?, disponivel = ? WHERE id = ?";
+        return "UPDATE produto SET codigo = ?, nome = ?, preco = ?, quantidade = ? WHERE id = ?";
     }
 
     private void adicionarParametrosUpdate(PreparedStatement stm, Produto produto) throws Exception {
@@ -79,8 +78,7 @@ public class ProdutoDaoImpl implements ProdutoDAO {
         stm.setString(2, produto.getNome());
         stm.setBigDecimal(3, produto.getPreco());
         stm.setInt(4, produto.getQuantidade());
-        stm.setBoolean(5, produto.getDisponivel());
-        stm.setLong(6, produto.getId());
+        stm.setLong(5, produto.getId());
     }
 
     @Override
@@ -90,7 +88,7 @@ public class ProdutoDaoImpl implements ProdutoDAO {
 
         try {
             conn = ConnectionFactory.getConnection();
-            stm = conn.prepareStatement("SELECT id, codigo, nome, preco, quantidade, disponivel FROM produto WHERE codigo = ?");
+            stm = conn.prepareStatement("SELECT id, codigo, nome, preco, quantidade FROM produto WHERE codigo = ?");
             stm.setString(1, codigo);
 
             try (ResultSet rs = stm.executeQuery()) {
@@ -117,7 +115,7 @@ public class ProdutoDaoImpl implements ProdutoDAO {
 
         try {
             conn = ConnectionFactory.getConnection();
-            stm = conn.prepareStatement("SELECT id, codigo, nome, preco, quantidade, disponivel FROM produto");
+            stm = conn.prepareStatement("SELECT id, codigo, nome, preco, quantidade FROM produto");
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -162,7 +160,6 @@ public class ProdutoDaoImpl implements ProdutoDAO {
         produto.setNome(rs.getString("nome"));
         produto.setPreco(rs.getBigDecimal("preco"));
         produto.setQuantidade(rs.getInt("quantidade"));
-        produto.setDisponivel(rs.getBoolean("disponivel"));
         return produto;
     }
 }

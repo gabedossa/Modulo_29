@@ -39,13 +39,12 @@ public class ClienteDaoImpl implements ClienteDAO {
     }
 
     private String getSqlInsert() {
-        return "INSERT INTO cliente (codigo, nome, email) VALUES (?, ?, ?)";
+        return "INSERT INTO cliente (codigo, nome) VALUES (?, ?)";
     }
 
     private void adicionarParametrosInsert(PreparedStatement stm, Cliente cliente) throws Exception {
         stm.setString(1, cliente.getCodigo());
         stm.setString(2, cliente.getNome());
-        stm.setString(3, cliente.getEmail());
     }
 
     @Override
@@ -69,14 +68,13 @@ public class ClienteDaoImpl implements ClienteDAO {
     }
 
     private String getSqlUpdate() {
-        return "UPDATE cliente SET codigo = ?, nome = ?, email = ? WHERE id = ?";
+        return "UPDATE cliente SET codigo = ?, nome = ? WHERE id = ?";
     }
 
     private void adicionarParametrosUpdate(PreparedStatement stm, Cliente cliente) throws Exception {
         stm.setString(1, cliente.getCodigo());
         stm.setString(2, cliente.getNome());
-        stm.setString(3, cliente.getEmail());
-        stm.setLong(4, cliente.getId());
+        stm.setLong(3, cliente.getId());
     }
 
     @Override
@@ -86,7 +84,7 @@ public class ClienteDaoImpl implements ClienteDAO {
 
         try {
             conn = ConnectionFactory.getConnection();
-            stm = conn.prepareStatement("SELECT id, codigo, nome, email FROM cliente WHERE codigo = ?");
+            stm = conn.prepareStatement("SELECT id, codigo, nome FROM cliente WHERE codigo = ?");
             stm.setString(1, codigo);
 
             try (ResultSet rs = stm.executeQuery()) {
@@ -113,7 +111,7 @@ public class ClienteDaoImpl implements ClienteDAO {
 
         try {
             conn = ConnectionFactory.getConnection();
-            stm = conn.prepareStatement("SELECT id, codigo, nome, email FROM cliente");
+            stm = conn.prepareStatement("SELECT id, codigo, nome FROM cliente");
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
@@ -156,7 +154,6 @@ public class ClienteDaoImpl implements ClienteDAO {
         cliente.setId(rs.getLong("id"));
         cliente.setCodigo(rs.getString("codigo"));
         cliente.setNome(rs.getString("nome"));
-        cliente.setEmail(rs.getString("email"));
         return cliente;
     }
 }
