@@ -45,6 +45,7 @@ class ProdutoDaoImplUnitTest {
         produto.setNome("Teclado");
         produto.setPreco(new BigDecimal("199.90"));
         produto.setQuantidade(10);
+        produto.setDisponivel(false);
 
         Integer id;
         try (MockedStatic<ConnectionFactory> factory = mockStatic(ConnectionFactory.class)) {
@@ -53,18 +54,20 @@ class ProdutoDaoImplUnitTest {
         }
 
         assertEquals(11, id);
-        verify(conn).prepareStatement("INSERT INTO produto (codigo, nome, preco, quantidade) VALUES (?, ?, ?, ?)",
+        verify(conn).prepareStatement(
+                "INSERT INTO produto (codigo, nome, preco, quantidade, disponivel) VALUES (?, ?, ?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS);
         verify(stm).setString(1, "PRD-001");
         verify(stm).setString(2, "Teclado");
         verify(stm).setBigDecimal(3, new BigDecimal("199.90"));
         verify(stm).setInt(4, 10);
+        verify(stm).setBoolean(5, false);
         verify(stm).close();
         verify(conn).close();
     }
 
     @Test
-    void atualizarDeveAtualizarCodigoNomePrecoQuantidadeEId() throws Exception {
+    void atualizarDeveAtualizarCodigoNomePrecoQuantidadeDisponivelEId() throws Exception {
         Connection conn = mock(Connection.class);
         PreparedStatement stm = mock(PreparedStatement.class);
         when(conn.prepareStatement(anyString())).thenReturn(stm);
@@ -76,6 +79,7 @@ class ProdutoDaoImplUnitTest {
         produto.setNome("Mouse");
         produto.setPreco(new BigDecimal("69.90"));
         produto.setQuantidade(15);
+        produto.setDisponivel(true);
 
         Integer linhas;
         try (MockedStatic<ConnectionFactory> factory = mockStatic(ConnectionFactory.class)) {
@@ -84,11 +88,14 @@ class ProdutoDaoImplUnitTest {
         }
 
         assertEquals(1, linhas);
+        verify(conn).prepareStatement(
+                "UPDATE produto SET codigo = ?, nome = ?, preco = ?, quantidade = ?, disponivel = ? WHERE id = ?");
         verify(stm).setString(1, "PRD-002");
         verify(stm).setString(2, "Mouse");
         verify(stm).setBigDecimal(3, new BigDecimal("69.90"));
         verify(stm).setInt(4, 15);
-        verify(stm).setLong(5, 4L);
+        verify(stm).setBoolean(5, true);
+        verify(stm).setLong(6, 4L);
         verify(stm).close();
         verify(conn).close();
     }
@@ -107,6 +114,7 @@ class ProdutoDaoImplUnitTest {
         when(rs.getString("nome")).thenReturn("Monitor");
         when(rs.getBigDecimal("preco")).thenReturn(new BigDecimal("899.00"));
         when(rs.getInt("quantidade")).thenReturn(4);
+        when(rs.getBoolean("disponivel")).thenReturn(false);
 
         Produto encontrado;
         try (MockedStatic<ConnectionFactory> factory = mockStatic(ConnectionFactory.class)) {
@@ -120,6 +128,7 @@ class ProdutoDaoImplUnitTest {
         assertEquals("Monitor", encontrado.getNome());
         assertEquals(0, new BigDecimal("899.00").compareTo(encontrado.getPreco()));
         assertEquals(4, encontrado.getQuantidade());
+        assertEquals(false, encontrado.getDisponivel());
         verify(stm).setString(1, "PRD-008");
     }
 

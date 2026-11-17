@@ -41,7 +41,8 @@ Cada entidade possui uma classe de modelo (POJO) em `model`, uma interface DAO e
 CREATE TABLE cliente (
     id BIGSERIAL PRIMARY KEY,
     codigo VARCHAR(50) NOT NULL UNIQUE,
-    nome VARCHAR(100) NOT NULL
+    nome VARCHAR(100) NOT NULL,
+    email VARCHAR(150)
 );
 
 -- Produto
@@ -50,7 +51,8 @@ CREATE TABLE produto (
     codigo VARCHAR(50) NOT NULL UNIQUE,
     nome VARCHAR(100) NOT NULL,
     preco NUMERIC(10,2) NOT NULL,
-    quantidade INT NOT NULL DEFAULT 0
+    quantidade INT NOT NULL DEFAULT 0,
+    disponivel BOOLEAN NOT NULL DEFAULT TRUE
 );
 
 -- Pedido (lado "1" do relacionamento com os itens)
@@ -71,7 +73,17 @@ CREATE TABLE item_pedido (
 );
 ```
 
+Se as tabelas já existiam antes das colunas `email` e `disponivel`, atualize o banco com:
+
+```sql
+ALTER TABLE cliente ADD COLUMN email VARCHAR(150);
+ALTER TABLE produto ADD COLUMN disponivel BOOLEAN NOT NULL DEFAULT TRUE;
+```
+
 Pontos importantes do schema:
+
+- `cliente.email` é opcional (aceita `NULL`).
+- `produto.disponivel` indica se o produto está ativo para venda; o padrão é `TRUE`, tanto no banco quanto no model `Produto`.
 
 - `pedido.data_pedido` é preenchida automaticamente pelo banco (`DEFAULT CURRENT_TIMESTAMP`); o DAO nunca envia esse valor no `INSERT`.
 - Excluir um `Pedido` remove seus itens em cascata (`ON DELETE CASCADE` em `item_pedido.pedido_id`).

@@ -42,6 +42,7 @@ class ClienteDaoImplUnitTest {
         Cliente cliente = new Cliente();
         cliente.setCodigo("CLI-001");
         cliente.setNome("Joao da Silva");
+        cliente.setEmail("joao@email.com");
 
         Integer id;
         try (MockedStatic<ConnectionFactory> factory = mockStatic(ConnectionFactory.class)) {
@@ -50,16 +51,17 @@ class ClienteDaoImplUnitTest {
         }
 
         assertEquals(7, id);
-        verify(conn).prepareStatement("INSERT INTO cliente (codigo, nome) VALUES (?, ?)",
+        verify(conn).prepareStatement("INSERT INTO cliente (codigo, nome, email) VALUES (?, ?, ?)",
                 Statement.RETURN_GENERATED_KEYS);
         verify(stm).setString(1, "CLI-001");
         verify(stm).setString(2, "Joao da Silva");
+        verify(stm).setString(3, "joao@email.com");
         verify(stm).close();
         verify(conn).close();
     }
 
     @Test
-    void atualizarDeveAtualizarCodigoNomeEId() throws Exception {
+    void atualizarDeveAtualizarCodigoNomeEmailEId() throws Exception {
         Connection conn = mock(Connection.class);
         PreparedStatement stm = mock(PreparedStatement.class);
         when(conn.prepareStatement(anyString())).thenReturn(stm);
@@ -69,6 +71,7 @@ class ClienteDaoImplUnitTest {
         cliente.setId(3L);
         cliente.setCodigo("CLI-002");
         cliente.setNome("Maria Souza");
+        cliente.setEmail("maria@email.com");
 
         Integer linhas;
         try (MockedStatic<ConnectionFactory> factory = mockStatic(ConnectionFactory.class)) {
@@ -77,9 +80,11 @@ class ClienteDaoImplUnitTest {
         }
 
         assertEquals(1, linhas);
+        verify(conn).prepareStatement("UPDATE cliente SET codigo = ?, nome = ?, email = ? WHERE id = ?");
         verify(stm).setString(1, "CLI-002");
         verify(stm).setString(2, "Maria Souza");
-        verify(stm).setLong(3, 3L);
+        verify(stm).setString(3, "maria@email.com");
+        verify(stm).setLong(4, 3L);
         verify(stm).close();
         verify(conn).close();
     }
@@ -96,6 +101,7 @@ class ClienteDaoImplUnitTest {
         when(rs.getLong("id")).thenReturn(5L);
         when(rs.getString("codigo")).thenReturn("CLI-005");
         when(rs.getString("nome")).thenReturn("Cliente Cinco");
+        when(rs.getString("email")).thenReturn("cinco@email.com");
 
         Cliente encontrado;
         try (MockedStatic<ConnectionFactory> factory = mockStatic(ConnectionFactory.class)) {
@@ -107,6 +113,7 @@ class ClienteDaoImplUnitTest {
         assertEquals(5L, encontrado.getId());
         assertEquals("CLI-005", encontrado.getCodigo());
         assertEquals("Cliente Cinco", encontrado.getNome());
+        assertEquals("cinco@email.com", encontrado.getEmail());
         verify(stm).setString(1, "CLI-005");
     }
 

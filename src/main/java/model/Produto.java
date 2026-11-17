@@ -8,6 +8,7 @@ public class Produto {
     private String nome;
     private BigDecimal preco;
     private Integer quantidade;
+    private Boolean disponivel = Boolean.TRUE;
 
     public Long getId(){
         return id;
@@ -47,6 +48,14 @@ public class Produto {
 
     public void setQuantidade(Integer quantidade) {
         this.quantidade = quantidade;
+    }
+
+    public Boolean getDisponivel() {
+        return disponivel;
+    }
+
+    public void setDisponivel(Boolean disponivel) {
+        this.disponivel = disponivel;
     }
 
 }

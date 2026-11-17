@@ -23,6 +23,7 @@ class ClienteDaoImplTest {
         Cliente cliente = new Cliente();
         cliente.setCodigo("TESTE-" + UUID.randomUUID());
         cliente.setNome(nome);
+        cliente.setEmail("teste@email.com");
         Integer id = dao.cadastrar(cliente);
         cliente.setId(id.longValue());
         criados.add(cliente);
@@ -51,13 +52,15 @@ class ClienteDaoImplTest {
         assertNotNull(encontrado);
         assertEquals(cliente.getCodigo(), encontrado.getCodigo());
         assertEquals("Joao da Silva", encontrado.getNome());
+        assertEquals("teste@email.com", encontrado.getEmail());
     }
 
     @Test
-    void atualizarDeveAlterarCodigoENome() throws Exception {
+    void atualizarDeveAlterarCodigoNomeEEmail() throws Exception {
         Cliente cliente = novoCliente("Maria Souza");
 
         cliente.setNome("Maria Souza Atualizada");
+        cliente.setEmail("maria.atualizada@email.com");
         cliente.setCodigo("TESTE-" + UUID.randomUUID());
         Integer linhasAfetadas = dao.atualizar(cliente);
 
@@ -66,6 +69,7 @@ class ClienteDaoImplTest {
         Cliente encontrado = dao.buscaCliente(cliente.getCodigo());
         assertNotNull(encontrado);
         assertEquals("Maria Souza Atualizada", encontrado.getNome());
+        assertEquals("maria.atualizada@email.com", encontrado.getEmail());
     }
 
     @Test
